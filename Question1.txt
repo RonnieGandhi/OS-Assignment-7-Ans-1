@@ -1,0 +1,51 @@
+The producer consumer problem is a synchronization problem. There is a fixed size buffer and the producer produces items and enters them into the buffer. The consumer removes the items from the buffer and consumes them.
+
+A producer should not produce items into the buffer when the consumer is consuming an item from the buffer and vice versa. So the buffer should only be accessed by the producer or consumer at a time.
+
+The producer consumer problem can be resolved using semaphores. The codes for the producer and consumer process are given as follows:
+
+Producer Process
+The code that defines the producer process is given below:
+
+do {
+      . 
+      . PRODUCE ITEM
+      .
+      wait(empty);
+      wait(mutex);
+      .  
+      . PUT ITEM IN BUFFER
+      .
+      signal(mutex);
+      signal(full);
+
+} while(1);       
+
+In the above code, mutex, empty and full are semaphores. Here mutex is initialized to 1, empty is initialized to n (maximum size of the buffer) and full is initialized to 0.
+
+The mutex semaphore ensures mutual exclusion. The empty and full semaphores count the number of empty and full spaces in the buffer.
+
+After the item is produced, wait operation is carried out on empty. This indicates that the empty space in the buffer has decreased by 1. Then wait operation is carried out on mutex so that consumer process cannot interfere.
+
+After the item is put in the buffer, signal operation is carried out on mutex and full. The former indicates that consumer process can now act and the latter shows that the buffer is full by 1.
+
+Consumer Process
+The code that defines the consumer process is given below:
+
+do {
+
+      wait(full);
+      wait(mutex);
+      .       .
+      .  REMOVE ITEM FROM BUFFER
+      . 
+      signal(mutex);
+      signal(empty);
+      .
+      . CONSUME ITEM
+      .
+} while(1);       
+
+The wait operation is carried out on full. This indicates that items in the buffer have decreased by 1. Then wait operation is carried out on mutex so that producer process cannot interfere.
+
+Then the item is removed from buffer. After that, signal operation is carried out on mutex and empty. The former indicates that consumer process can now act and the latter shows that the empty space in the buffer has increased by 1.
